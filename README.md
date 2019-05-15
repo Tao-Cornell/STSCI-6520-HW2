@@ -13,4 +13,4 @@ You can subsequently load the package with the usual R commands:
 ```r
 library(HW2)
 ```
-
+For detailed usage of the functions in the package, please refer to the `vignette.html` file in the HW2/vignettes file folder.
