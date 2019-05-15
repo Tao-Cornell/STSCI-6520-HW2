@@ -1,0 +1,93 @@
+---
+title: "Introduction to HW2 Three Functions"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to HW2 Three Functions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## HW2 Function
+
+The R package `HW2` contains three functions: `solve_ols()`, `algo_leverage()` and `elnet_coord()`. In those functions, the following packages `Matrix`, `stats` and `MASS` are used. These three functions deal with the corresponding three problems in the HW1 and we will demonstrate the usage of them in this article. 
+
+`HW2` can be loaded using the `library` command:
+```{r, message=FALSE}
+library("demogR")
+library("stats")
+library("MASS")
+library("HW2")
+```
+### solve_ols() Function
+
+For `solve_ols(X,b,method,tol=1e-4)` function, this function solves a linear system using Gauss-Seidel or Jacobi method. It takes four arguments as following. 
+
+$X$: the coefficient matrix of the linear system and should be a square matrix.
+
+$b$: the column vector collects values of each linear equation. 
+
+$method$: the method is used to solve the linear system, either "Gauss" or "Jacobi" coresponding to Gauss-Seidel or Jacobi method respectively.
+
+$tol$: the convergence criterion which is measured by the l_2 norm of the difference of between the current solution and the solution in the last iteration. The default value is $10^{-4}$.
+
+`solve_ols()` will return the solution vector of the linear system specified in the function.
+
+One usage example is as follows:
+```
+# Generate X and b as in HW1
+alpha=2
+L=odiag(c(rep(-1,99)),-1)
+U=odiag(c(rep(-1,99)),1)
+D=diag(alpha,100,100)
+X=L+U+D
+v=matrix(c(rep(c(1,0),50)),ncol=1)
+b=X%*%v
+
+# Gauss-Seidel method
+v_gauss=solve_ols(X=X,b=b,method="Gauss")
+
+# Jacobi method
+v_jacobi=solve_ols(X=X,b=b,method="Jacobi")
+```
+
+### algo_leverage() Function
+
+For `algo_leverage` function, this function implements algorithmic leveraging for linear regression using uniform and leverage score based subsampling of rows. More specifically, the simulation setting of Figure 1 in https://onlinelibrary.wiley.com/doi/full/10.1002/wics.1324 is considered.
+
+The function will automatically generate the simulation setting in previous paper, so it does not take any arguments.
+
+`algo_leverage()` will return a list contains two numeric vectors, the simulated design matrix $X$, the simulated response matrix $Y$. The two numeric vectors corresponding to uniform sampling (beta_unif) and leverage sampling (beta_lev). Each vector contains regression coefficients obtained using r = 10, 50, 100, 200, 300 in order.
+
+One usage example is as follows:
+```
+result=algo_leverage()
+# simulated design matrix
+X=result$X
+# simulated response matrix
+Y=result$Y
+# uniform sampling regression coefficients 
+beta_unif=result$beta_unif
+# leverage sampling regression coefficients
+beta_lev=result$beta_lev
+```
+
+
+### elnet_coord() Function
+
+For `elnet_coord()` function, this function fits elastic net to data using coordinate descent algorithm. 
+
+The function will automatically generate the simulation setting specified in homework 1 problem 3 part 2 with $\lambda$ running over a equally sapced grid of size $100$ on $[0,3]$, so it does not take any arguments.
+
+The function will return a matrix of regression coefficients for each $\lambda$ collected as column vectors, the simulated design matrix $X$, the simulated response matrix $Y$ and together with a solution path plot shown in the plots panel.
+
+One usage example is as follows:
+```
+result=elnet_coord()
+# simulated design matrix
+X=result$X
+# simulated response matrix
+Y=result$Y
+# regression coefficients 
+beta=result$beta
+```
+
